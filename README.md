@@ -1,3 +1,5 @@
+##Di Jialei
+
 ## Fonctionnalités à développer
 
 La symbolique :dart: désigne le périmètre minimum à réaliser.
