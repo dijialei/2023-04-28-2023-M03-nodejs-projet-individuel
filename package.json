@@ -1,0 +1,18 @@
+{
+  "name": "2023-04-28-2023-m03-nodejs-projet-individuel",
+  "version": "1.0.0",
+  "description": "La symbolique :dart: désigne le périmètre minimum à réaliser.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "mongoose": "^7.1.0",
+    "nodemon": "^2.0.22"
+  }
+}
