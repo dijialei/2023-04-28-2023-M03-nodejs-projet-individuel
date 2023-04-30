@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Pizza from '../models/pizza.js';
 import Livreur from '../models/livreur.js';
+import Client from '../models/client.js';
+import brcyptjs from 'bcryptjs';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/restaurant-pizza';
 mongoose.set('strictQuery', false);
@@ -168,6 +170,95 @@ app.post('/admin/livreur/delete', async (req, res) => {
 
 })
 
+//admin client
+
+app.get('/admin/client', async (req, res) => {
+    let result = await Client.find({});
+    let length = result.length;
+    res.render('client', {
+        showForm: false,
+        length: length,
+        arrayClient: result
+    })
+})
+
+app.get('/admin/client/showForm', async (req, res) => {
+    res.render('client', {
+        showForm: true,
+        actionForm: '/admin/client/create',
+        nameId: '',
+        item: {
+            _id: '',
+            nom: '',
+            prenom: '',
+            adresses: '',
+            email: '',
+            password: ''
+        }
+    })
+})
+
+app.post('/admin/client/create', async (req, res) => {
+    req.body.password = brcyptjs.hashSync(req.body.password, 10);
+    let result = await Client.create(req.body);
+    result = await Client.find({});
+    let length = result.length;
+    res.render('client', {
+        showForm: false,
+        length: length,
+        arrayClient: result
+    })
+
+})
+
+app.post('/admin/client/editer', async (req, res) => {
+    const url = req.url;
+    const requestUrl = new URL(url, backEndUrl);
+    const id = requestUrl.searchParams.get('_id');
+    let result = await Client.findById(id);
+    res.render('client', {
+        showForm: true,
+        actionForm: '/admin/client/update',
+        nameId: 'name=_id',
+        item: result
+    });
+})
+
+app.post('/admin/client/update', async (req, res) => {
+    let result = await Client.findById(req.body._id);
+    if (req.body.password != result.password) {
+        req.body.password = brcyptjs.hashSync(req.body.password, 10);
+    }
+    result = await Client.findByIdAndUpdate(req.body._id, {
+        nom: req.body.nom,
+        prenom: req.body.prenom,
+        adresses: req.body.adresses,
+        email: req.body.email,
+        password: req.body.password
+    })
+    result = await Client.find({});
+    let length = result.length;
+    res.render('client', {
+        showForm: false,
+        length: length,
+        arrayClient: result
+    })
+})
+
+app.post('/admin/client/delete',async (req,res)=>{
+    const url = req.url;
+    const requestUrl = new URL(url, backEndUrl);
+    const id = requestUrl.searchParams.get('_id');
+    let result = await Client.findByIdAndDelete(id);
+    result = await Client.find({});
+    let length = result.length;
+    res.render('client', {
+        showForm: false,
+        length: length,
+        arrayClient: result
+    })
+
+})
 
 
 
