@@ -4,7 +4,7 @@
   "description": "La symbolique :dart: désigne le périmètre minimum à réaliser.",
   "main": "index.js",
   "scripts": {
-    "start": "node src/app.js"
+    "start": "nodemon src/app.js"
   },
   "type": "module",
   "author": "",
