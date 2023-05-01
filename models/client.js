@@ -4,7 +4,7 @@ const clientSchema = new Schema({
     
     nom: String,
     prenom: String,
-    adresses: String,
+    adresses: Array,
     email: String,
     password: String,
 

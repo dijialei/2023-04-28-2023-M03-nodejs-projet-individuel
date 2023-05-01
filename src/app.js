@@ -199,6 +199,7 @@ app.get('/admin/client/showForm', async (req, res) => {
 })
 
 app.post('/admin/client/create', async (req, res) => {
+
     req.body.password = brcyptjs.hashSync(req.body.password, 10);
     let result = await Client.create(req.body);
     result = await Client.find({});
@@ -245,7 +246,7 @@ app.post('/admin/client/update', async (req, res) => {
     })
 })
 
-app.post('/admin/client/delete',async (req,res)=>{
+app.post('/admin/client/delete', async (req, res) => {
     const url = req.url;
     const requestUrl = new URL(url, backEndUrl);
     const id = requestUrl.searchParams.get('_id');
