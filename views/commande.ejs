@@ -17,57 +17,79 @@
 
             <div class="row h-100 d-flex justify-content-center">
                 <div class="border border-dark border-3 col-8 h-100 me-4 d-flex">
-                    <div class="mt-2"><a class="btn btn-primary" href="/admin/client/showForm">Nouvelle Client</a></div>
+                    <div class="mt-2"><a class="btn btn-primary" href="/admin/commande/showForm">Nouvelle Commande</a>
+                    </div>
 
                     <div class="mt-2 col-9 d-flex align-items-center justify-content-center " style="overflow:auto;">
                         <% if(showForm) { %>
-                            <!-- /admin/client/create -->
-                            <form id="formEditClient" method="POST" action="<%=actionForm%>">
+                            <form id="formEditCommande" method="POST" action="<%=actionForm%>">
                                 <div class="input-group mb-3">
                                     <span class=" col-4 input-group-text">Id :</span>
                                     <input type="text" class="form-control" readonly <%=nameId%> value="<%=item._id%>">
                                 </div>
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Nom :</span>
-                                    <input type="text" class="form-control" id="nom" name="nom" value="<%=item.nom%>">
+                                    <span class="col-4 input-group-text">Livreur :</span>
+                                    <select id="livreur" name="livreur" class="form-select form-select-sm"
+                                        aria-label=".form-select-sm example">
+                                        <option value="<%=item.livreur%>" selected>
+                                            <%=item.livreur%>
+                                        </option>
+                                        <!-- <option value="1">One</option> -->
+                                        <% for (let index=0; index < livreurList.length; index++) {%>
+                                            <option
+                                                value="<%=livreurList[index].prenom %> <%=livreurList[index].nom %>">
+                                                <%=livreurList[index].prenom %>
+                                                    <%=livreurList[index].nom %>
+                                            </option>
+                                            <%}%>
+                                    </select>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Prenom :</span>
-                                    <input type="text" class="form-control" id="prenom" name="prenom"
-                                        value="<%=item.prenom%>">
-                                </div>
-                                <div id="adressesList">
-                                    <div class="input-group mb-3">
-                                        <span class="col-4 input-group-text">Adresses :</span>
-                                        <input type="text" class="form-control" id="adresses" name="adresses"
-                                            value="<%=item.adresses[0]%>">
-                                        <span id="add" class="col-1 input-group-text" style="cursor: pointer;"><strong>
-                                                + </strong></span>
-                                    </div>
-                                    <input id="lengthArr" type="text" value="<%=item.adresses.length%>" hidden>
-                                    <%for (let index=1; index < item.adresses.length; index++) {%>
-                                        <div id="reduce<%=index%>Div" class="input-group mb-3">
-                                            <span class="col-4 input-group-text">Adresses <%=index+1%> :</span>
-                                            <input type="text" class="form-control" name="adresses"
-                                                value="<%=item.adresses[index]%>">
-                                            <span class="col-1 input-group-text"><strong id="reduce<%=index%>"
-                                                    style="cursor: pointer;"> - </strong></span>
-                                        </div>
-                                        <%}%>
+                                    <span class="col-4 input-group-text">Client :</span>
+                                    <select id="client" name="client" class="form-select form-select-sm"
+                                        aria-label=".form-select-sm example">
+                                        <option value="<%=item.client._id%>" selected>
+                                            <%=item.client.prenom%> <%=item.client.nom%>
+                                        </option>
+                                        <!-- <option value="1">One</option> -->
+                                        <% for (let index=0; index < clientList.length; index++) {%>
+                                            <option
+                                                value="<%=clientList[index]._id %>">
+                                                <%=clientList[index].prenom %>
+                                                    <%=clientList[index].nom %>
+                                            </option>
+                                            <%}%>
+                                    </select>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Email :</span>
-                                    <input type="text" class="form-control" id="email" name="email"
-                                        value="<%=item.email%>">
-                                </div>
-                                <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Password :</span>
-                                    <input type="text" class="form-control" id="password" name="password"
-                                        value="<%=item.password%>">
+                                    <span class="col-4 input-group-text">Statut :</span>
+                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                                        <option selected>
+                                            <%item.statut%>
+                                        </option>
+                                        <option value="ENREGISTRE">ENREGISTRE</option>
+                                        <option value="EN_COURS_DE_LIVRAISON">EN_COURS_DE_LIVRAISON</option>
+                                        <option value="LIVRE">LIVRE</option>
+                                    </select>
                                 </div>
 
+                                <div class="input-group mb-3">
+                                    <span class="col-4 input-group-text">Catégorie :</span>
+                                    <input type="text" class="form-control" id="categorie" name="categorie"
+                                        value="<%=item.categorie%>">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="col-4 input-group-text">prix :</span>
+                                    <input type="text" class="form-control" id="prix" name="prix"
+                                        value="<%=item.prix%>">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="col-4 input-group-text">Version :</span>
+                                    <input type="text" class="form-control" id="version" name="version"
+                                        value="<%=item.version%>">
+                                </div>
                                 <div class="d-flex justify-content-between">
-                                    <a href="/admin/client" class="btn btn-primary ">Annuler</a>
+                                    <a href="/admin/pizza" class="btn btn-primary ">Annuler</a>
                                     <button type="submit" class="btn btn-primary ">Soumettre</button>
                                 </div>
                             </form>
@@ -76,9 +98,9 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Id</th>
-                                            <th scope="col">Nom</th>
-                                            <th scope="col">Prenom</th>
-                                            <th scope="col">Email</th>
+                                            <th class="w-50" scope="col">Nom</th>
+                                            <th scope="col">Version</th>
+                                            <th scope="col">Prix</th>
                                             <th scope="col">Action</th>
                                             <th scope="col"></th>
                                         </tr>
@@ -87,21 +109,19 @@
                                         <% for(var i=0;i<length;i++){ %>
                                             <tr>
                                                 <form method="POST"
-                                                    action="/admin/client/editer?_id=<%=arrayClient[i]._id %>">
+                                                    action="/admin/pizza/editer?_id=<%=arrayPizza[i]._id %>">
                                                     <th scope="row">
                                                         <%= i+1 %>
                                                     </th>
                                                     <td>
-                                                        <%= arrayClient[i].nom %>
+                                                        <%= arrayPizza[i].libelle %>
                                                     </td>
                                                     <td>
-                                                        <%= arrayClient[i].prenom %>
+                                                        <%= arrayPizza[i].version %>
                                                     </td>
-
                                                     <td>
-                                                        <%= arrayClient[i].email %>
+                                                        <%= arrayPizza[i].prix %>
                                                     </td>
-
                                                     <td><button class="btn btn-primary" type="submit">Editer</button>
                                                     </td>
                                                 </form>
@@ -109,12 +129,12 @@
                                                 <!-- Button trigger modal -->
                                                 <td>
                                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                                        data-bs-target="#m<%=arrayClient[i]._id %>">
+                                                        data-bs-target="#m<%=arrayPizza[i]._id %>">
                                                         Supprimer
                                                     </button>
                                                 </td>
                                                 <!-- Modal -->
-                                                <div class="modal fade" id="m<%=arrayClient[i]._id %>" tabindex="-1"
+                                                <div class="modal fade" id="m<%=arrayPizza[i]._id %>" tabindex="-1"
                                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -130,7 +150,7 @@
                                                                     <button type="button" class="btn btn-secondary"
                                                                         data-bs-dismiss="modal">Annuler</button>
                                                                     <form method="POST"
-                                                                        action="/admin/client/delete?_id=<%=arrayClient[i]._id %>">
+                                                                        action="/admin/pizza/delete?_id=<%=arrayPizza[i]._id %>">
                                                                         <button class="btn btn-danger"
                                                                             type="submit">Supprimer</button>
                                                                     </form>
@@ -147,7 +167,6 @@
                                 </table>
                     </div>
                 </div>
-
                 <div class="border border-dark border-3 col-3 h-100  bg-light">
 
                     Zone A
@@ -165,55 +184,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
             crossorigin="anonymous"></script>
-        <script>
-            window.onload = function () {
-
-                const add = document.getElementById('add');
-                if (add) {
-
-                    const lengthArr = document.getElementById("lengthArr");
-                    let index = +lengthArr.value + 1;
-                    add.onclick = function () {
-
-                        const adressesList = document.getElementById('adressesList');
-
-                        const addInput = document.createElement('div');
-                        addInput.className = 'input-group mb-3';
-                        addInput.id = `reduce${index}Div`;
-                        addInput.innerHTML = `<span class="col-4 input-group-text">New Adresses :</span>
-                                        <input type="text" class="form-control" name="adresses" placeholder="ajouter une autre adresse" >
-                        <span class="col-1 input-group-text"><strong id="reduce${index}"
-                            style="cursor: pointer;"> - </strong></span>`;
-                        adressesList.appendChild(addInput);
-                        const reduceSpan = document.getElementById(`reduce${index}`);
-                        reduceSpan.onclick =(e)=>{
-                            const reduceDiv = document.getElementById(`${e.target.id}Div`);
-                            reduceDiv.innerHTML = "";
-                            reduceDiv.classList = "";
-                        };
-                        index++;
-                    }
-                    let element = '';
-                    let reduceSpan = '';
-                    for (let index = 1; index < +lengthArr.value; index++) {
-                        element = `reduce${index}`;
-
-                        reduceSpan = document.getElementById(element);
-
-                        reduceSpan.onclick = (e) => {
-                            let divId = e.target.id + 'Div';
-                            const reduceDiv = document.getElementById(divId);
-                            reduceDiv.innerHTML = "";
-                            reduceDiv.classList = "";
-
-
-                        };
-                    }
-
-                }
-
-            }
-        </script>
 </body>
 
 </html>
