@@ -22,7 +22,7 @@ Les écrans ne sont pas contractuelles, n'hésitez pas à être force de proposi
 - [x] :dart: [USA004 - Pizza - CRUD](issues/admin/usa004.md)
 - [x] :dart: [USA005 - Livreur - CRUD](issues/admin/usa005.md)
 - [x] :dart: [USA006 - Client - CRUD](issues/admin/usa006.md)
-- [ ] :dart: [USA007 - Commande - CRUD](issues/admin/usa007.md)
+- [x] :dart: [USA007 - Commande - CRUD](issues/admin/usa007.md)
 - [ ] [USA008 - Statistiques (temps réel)](issues/admin/usa008.md)
 - [ ] [USA009 - Promotions - CRUD](issues/admin/usa009.md)
 - [ ] [USA010 - Historique des emails envoyés](issues/admin/usa010.md)
