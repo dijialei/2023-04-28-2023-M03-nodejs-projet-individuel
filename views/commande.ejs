@@ -16,80 +16,153 @@
         <main class="container">
 
             <div class="row h-100 d-flex justify-content-center">
-                <div class="border border-dark border-3 col-8 h-100 me-4 d-flex">
+                <div class="border border-dark border-3 col-8 h-100 me-4 d-flex pe-0">
                     <div class="mt-2"><a class="btn btn-primary" href="/admin/commande/showForm">Nouvelle Commande</a>
                     </div>
 
-                    <div class="mt-2 col-9 d-flex align-items-center justify-content-center " style="overflow:auto;">
+                    <div class="mt-2 col-10 d-flex align-items-center justify-content-center " style="overflow:auto;">
                         <% if(showForm) { %>
                             <form id="formEditCommande" method="POST" action="<%=actionForm%>">
                                 <div class="input-group mb-3">
-                                    <span class=" col-4 input-group-text">Id :</span>
+                                    <span class=" col-2 input-group-text">Id :</span>
                                     <input type="text" class="form-control" readonly <%=nameId%> value="<%=item._id%>">
                                 </div>
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Livreur :</span>
+                                    <span class="col-2 input-group-text">Livreur :</span>
                                     <select id="livreur" name="livreur" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
                                         <option value="<%=item.livreur%>" selected>
                                             <%=item.livreur%>
                                         </option>
                                         <!-- <option value="1">One</option> -->
-                                        <% for (let index=0; index < livreurList.length; index++) {%>
+                                        <% for (let index=0; index < livreurList.length; index++) { if (item.livreur
+                                            !=livreurList[index].prenom + " " + livreurList[index].nom ) { %>
                                             <option
                                                 value="<%=livreurList[index].prenom %> <%=livreurList[index].nom %>">
                                                 <%=livreurList[index].prenom %>
                                                     <%=livreurList[index].nom %>
                                             </option>
-                                            <%}%>
+                                            <%}}%>
                                     </select>
                                 </div>
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Client :</span>
+                                    <span class="col-2 input-group-text">Client :</span>
                                     <select id="client" name="client" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
                                         <option value="<%=item.client._id%>" selected>
-                                            <%=item.client.prenom%> <%=item.client.nom%>
+                                            <%=item.client.prenom%>
+                                                <%=item.client.nom%>
                                         </option>
-                                        <!-- <option value="1">One</option> -->
+
                                         <% for (let index=0; index < clientList.length; index++) {%>
-                                            <option
-                                                value="<%=clientList[index]._id %>">
-                                                <%=clientList[index].prenom %>
-                                                    <%=clientList[index].nom %>
-                                            </option>
-                                            <%}%>
+                                            <% if (item.client._id !=String(clientList[index]._id)) {%>
+
+
+                                                <option value="<%=clientList[index]._id %>">
+                                                    <%=clientList[index].prenom %>
+                                                        <%=clientList[index].nom %>
+                                                </option>
+                                                <% } %>
+                                                    <%}%>
                                     </select>
                                 </div>
+                                <div id="pizzaListDiv">
+                                    <div class="input-group mb-3">
+                                        <span class="col-2 input-group-text">Pizzas :</span>
+                                        <select name="IdsPizza" class="w-50 form-select form-select-sm"
+                                            aria-label=".form-select-sm example">
+                                            <option value="<%=item.pizzas[0]._id%>" selected>
+                                                <%=item.pizzas[0].libelle%>--<%=item.pizzas[0].version%>
+                                            </option>
+
+                                            <%for (let index=0; index < pizzaList.length; index++) { %>
+                                                <% if (item.pizzas[0]._id !=String(pizzaList[index]._id)) {%>
+                                                    <option value="<%=pizzaList[index]._id%>">
+                                                        <%=pizzaList[index].libelle%>--<%=pizzaList[index].version%>
+                                                    </option>
+                                                    <% } %>
+                                                        <%}%>
+                                        </select>
+                                        <strong class="align-self-center">X</strong>
+                                        <input name="QPizza" type="text" class="col-1 form-control "
+                                            value="<%=item.pizzas[0].quantites%>">
+                                        <span id="add" class="col-1 input-group-text" style="cursor: pointer;">
+                                            <strong> + </strong>
+                                        </span>
+                                    </div>
+                                    <input type="text" id="number" value="<%=item.pizzas.length%>" disabled hidden>
+                                    <% for (let index=1; index < item.pizzas.length; index++) {%>
+                                        <div id="reduce<%=index%>Div" class="input-group mb-3">
+                                            <span class="col-2 input-group-text"></span>
+                                            <select name="IdsPizza" class="w-50 col-8 form-select form-select-sm"
+                                                aria-label=".form-select-sm example">
+                                                <option value="<%=item.pizzas[index]._id%>" selected>
+                                                    <%=item.pizzas[index].libelle%>--<%=item.pizzas[index].version%>
+                                                </option>
+
+                                                <%for (let i=0; i < pizzaList.length; i++) { %>
+                                                    <% if (item.pizzas[index]._id !=String(pizzaList[i]._id)) {%>
+
+                                                        <option value="<%=pizzaList[i]._id%>">
+                                                            <%=pizzaList[i].libelle%>--<%=pizzaList[i].version%>
+                                                        </option>
+                                                        <% } %>
+
+                                                            <%}%>
+                                            </select>
+                                            <strong class="align-self-center">X</strong>
+                                            <input name="QPizza" type="text" class="form-control col-1"
+                                                value="<%=item.pizzas[index].quantites%>">
+                                            <span class="col-1 input-group-text" style="cursor: pointer;">
+                                                <strong id="reduce<%=index%>"> — </strong>
+                                            </span>
+                                        </div>
+
+                                        <%}%>
+                                </div>
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Statut :</span>
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                        <option selected>
-                                            <%item.statut%>
+                                    <span class="col-2 input-group-text">Statut :</span>
+                                    <select name="statut" class="form-select form-select-sm"
+                                        aria-label=".form-select-sm example">
+                                        <option value="<%=item.statut%>" selected>
+                                            Original state : <%=item.statut%>
                                         </option>
                                         <option value="ENREGISTRE">ENREGISTRE</option>
-                                        <option value="EN_COURS_DE_LIVRAISON">EN_COURS_DE_LIVRAISON</option>
+                                        <option value="EN_COURS DE_LIVRAISON">EN_COURS DE_LIVRAISON</option>
                                         <option value="LIVRE">LIVRE</option>
                                     </select>
                                 </div>
 
+
                                 <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Catégorie :</span>
-                                    <input type="text" class="form-control" id="categorie" name="categorie"
-                                        value="<%=item.categorie%>">
+                                    <span class="col-2 input-group-text">Adresse :</span>
+                                    <select id="adresse" name="adresse" class="form-select form-select-sm"
+                                        aria-label=".form-select-sm example">
+                                        <option value="<%=item.adresse%>" selected>
+                                            <%=item.adresse%>
+                                        </option>
+                                        <% for (let index=0; index < clientList.length; index++) { %>
+                                            <%if (item.client._id==clientList[index]._id) { %>
+                                                <%let arrayAdresse=clientList[index].adresses; %>
+                                                    <% for (let i=0; i < arrayAdresse.length; i++) {%>
+                                                        <% if (item.adresse !=arrayAdresse[i]) {%>
+
+                                                            <option value="<%=arrayAdresse[i]%>">
+                                                                <%=arrayAdresse[i]%>
+                                                            </option>
+                                                            <% } %>
+
+                                                                <% };%>
+                                                                    <% break;%>
+                                                                        <% };%>
+                                                                            <% }; %>
+
+                                    </select>
+
                                 </div>
-                                <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">prix :</span>
-                                    <input type="text" class="form-control" id="prix" name="prix"
-                                        value="<%=item.prix%>">
-                                </div>
-                                <div class="input-group mb-3">
-                                    <span class="col-4 input-group-text">Version :</span>
-                                    <input type="text" class="form-control" id="version" name="version"
-                                        value="<%=item.version%>">
-                                </div>
+
                                 <div class="d-flex justify-content-between">
-                                    <a href="/admin/pizza" class="btn btn-primary ">Annuler</a>
+                                    <a href="/admin/commande" class="btn btn-primary ">Annuler</a>
                                     <button type="submit" class="btn btn-primary ">Soumettre</button>
                                 </div>
                             </form>
@@ -98,9 +171,9 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Id</th>
-                                            <th class="w-50" scope="col">Nom</th>
-                                            <th scope="col">Version</th>
-                                            <th scope="col">Prix</th>
+                                            <th class="col" scope="col">Nom</th>
+                                            <th scope="col">Statut</th>
+                                            <th scope="col">Total</th>
                                             <th scope="col">Action</th>
                                             <th scope="col"></th>
                                         </tr>
@@ -109,32 +182,33 @@
                                         <% for(var i=0;i<length;i++){ %>
                                             <tr>
                                                 <form method="POST"
-                                                    action="/admin/pizza/editer?_id=<%=arrayPizza[i]._id %>">
+                                                    action="/admin/commande/editer?_id=<%=arrayCommande[i]._id %>">
                                                     <th scope="row">
-                                                        <%= i+1 %>
+                                                        <%= arrayCommande[i]._id %>
                                                     </th>
                                                     <td>
-                                                        <%= arrayPizza[i].libelle %>
+                                                        <%= arrayCommande[i].client.prenom %>
+                                                            <%= arrayCommande[i].client.nom %>
                                                     </td>
                                                     <td>
-                                                        <%= arrayPizza[i].version %>
+                                                        <%= arrayCommande[i].statut %>
                                                     </td>
                                                     <td>
-                                                        <%= arrayPizza[i].prix %>
+                                                        <%=arrayCommande[i].total %>
                                                     </td>
                                                     <td><button class="btn btn-primary" type="submit">Editer</button>
                                                     </td>
                                                 </form>
 
-                                                <!-- Button trigger modal -->
+
                                                 <td>
                                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                                        data-bs-target="#m<%=arrayPizza[i]._id %>">
+                                                        data-bs-target="#m<%=arrayCommande[i]._id %>">
                                                         Supprimer
                                                     </button>
                                                 </td>
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="m<%=arrayPizza[i]._id %>" tabindex="-1"
+
+                                                <div class="modal fade" id="m<%=arrayCommande[i]._id %>" tabindex="-1"
                                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -150,7 +224,7 @@
                                                                     <button type="button" class="btn btn-secondary"
                                                                         data-bs-dismiss="modal">Annuler</button>
                                                                     <form method="POST"
-                                                                        action="/admin/pizza/delete?_id=<%=arrayPizza[i]._id %>">
+                                                                        action="/admin/commande/delete?_id=<%=arrayCommande[i]._id %>">
                                                                         <button class="btn btn-danger"
                                                                             type="submit">Supprimer</button>
                                                                     </form>
@@ -162,9 +236,12 @@
 
                                             </tr>
                                             <% } %>
-                                                <%}%>
+
                                     </tbody>
                                 </table>
+
+
+                                <%}%>
                     </div>
                 </div>
                 <div class="border border-dark border-3 col-3 h-100  bg-light">
@@ -184,6 +261,108 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
             crossorigin="anonymous"></script>
+        <script>
+            window.onload = function () {
+                const client = document.getElementById('client');
+                const adresseSelect = document.getElementById('adresse');
+                const add = document.getElementById('add');
+                const pizzaListDiv = document.getElementById('pizzaListDiv');
+                const number = document.getElementById('number');
+                if (number) {
+                    
+                    let index = +number.value;
+                    let element = '';
+                    let reduceSpan = '';
+                    for (let i = 1; i < index; i++) {
+                        element = `reduce${i}`;
+                        reduceSpan = document.getElementById(element);
+                        reduceSpan.onclick = (e) => {
+                            let divId = e.target.id + 'Div';
+                            const reduceDiv = document.getElementById(divId);
+                            reduceDiv.innerHTML = "";
+                            reduceDiv.classList = "";
+    
+    
+                        };
+                    }
+    
+    
+                    index++;
+                    add.onclick = function () {
+                        let newPizzaDiv = document.createElement('div');
+                        newPizzaDiv.id = `reduce${index}Div`;
+                        newPizzaDiv.className = "input-group mb-3";
+                        newPizzaDiv.innerHTML = '<span class="col-2 input-group-text"></span>';
+                        fetch('/admin/commande/pizzaList')
+                            .then(res => {
+                                return res.json();
+                            }).then(res => {
+    
+                                const pizzaSelect = document.createElement('select');
+                                pizzaSelect.name = 'IdsPizza';
+                                pizzaSelect.className = 'w-50 form-select form-select-sm';
+                                pizzaSelect.ariaLabel = '.form-select-sm example';
+                                pizzaSelect.innerHTML = `<option value="${res[0]._id}" selected>
+                                                        ${res[0].libelle}--${res[0].version}
+                                                    </option>`;
+                                for (let i = 1; i < res.length; i++) {
+                                    let option = document.createElement('option');
+                                    option.value = `${res[i]._id}`;
+                                    option.innerText = `${res[i].libelle}--${res[i].version}`;
+                                    pizzaSelect.appendChild(option);
+                                };
+                                newPizzaDiv.appendChild(pizzaSelect);
+                                const strong = document.createElement('strong');
+                                strong.className="align-self-center";
+                                strong.innerText = 'X';
+                                newPizzaDiv.appendChild(strong);
+                                const newInput = document.createElement('input');
+                                newInput.name = 'QPizza';
+                                newInput.type = 'text';
+                                newInput.className = 'form-control col-1';
+                                newPizzaDiv.appendChild(newInput);
+                                const span = document.createElement('span');
+                                span.className = "col-1 input-group-text";
+                                const reduce = document.createElement('strong');
+                                reduce.id = `reduce${index}`;
+                                reduce.style = "cursor: pointer;";
+                                reduce.innerText = " — ";
+                                reduce.onclick = (e) => {
+                                    const element = e.target.id + 'Div';
+                                    const reduceDiv = document.getElementById(element);
+                                    reduceDiv.innerHTML = '';
+                                    reduceDiv.classList = '';
+                                };
+                                span.appendChild(reduce);
+                                newPizzaDiv.appendChild(span);
+                                pizzaListDiv.appendChild(newPizzaDiv);
+    
+                                index++;
+                            });
+    
+    
+                    };
+                    client.onchange = (e) => {
+                        if (e.target.value) {
+                            fetch(`/admin/commande/adresseList?_id=${e.target.value}`)
+                                .then(res => {
+                                    return res.json();
+                                }).then(res => {
+                                    adresseSelect.innerHTML = `<option value="${res[0]}" selected>
+                                                                ${res[0]}
+                                                                </option>`;
+                                    for (let i = 1; i < res.length; i++) {
+                                        let option = document.createElement('option');
+                                        option.value = res[i];
+                                        option.innerText = res[i];
+                                        adresseSelect.appendChild(option);
+                                    }
+                                })
+                        } else adresseSelect.innerHTML = "";
+                    }
+                }
+                }
+        </script>
 </body>
 
 </html>

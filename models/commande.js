@@ -4,7 +4,7 @@ const commandeSchema = new Schema({
 
     livreur: String,
     client: { nom: String, prenom: String, _id: String },
-    pizzas: [{ nom: String, quantites: Number }],
+    pizzas: [{ libelle: String, quantites: Number ,version: String, _id : String}],
     statut: String,
     adresse: String,
     total: Number

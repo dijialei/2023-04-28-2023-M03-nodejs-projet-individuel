@@ -280,6 +280,7 @@ app.get('/admin/commande/showForm', async (req, res) => {
     let clientList = await Client.find({});
     let pizzaList = await Pizza.find({});
 
+
     res.render('commande', {
         showForm: true,
         nameId: '',
@@ -291,7 +292,7 @@ app.get('/admin/commande/showForm', async (req, res) => {
             _id: "",
             livreur: "",
             client: { nom: '', prenom: '', _id: '' },
-            pizzas: [],
+            pizzas: [{ libelle: ' ', quantites: ' ', version: ' ', _id: ' ' }],
             statut: "",
             adresse: "",
             total: ""
@@ -299,41 +300,140 @@ app.get('/admin/commande/showForm', async (req, res) => {
     });
 })
 
-app.post('/admin/pizza/editer', async (req, res) => {
+app.post('/admin/commande/editer', async (req, res) => {
+    let livreurList = await Livreur.find({});
+    let clientList = await Client.find({});
+    let pizzaList = await Pizza.find({});
     const url = req.url;
     const requestUrl = new URL(url, backEndUrl);
     const id = requestUrl.searchParams.get('_id');
-    let result = await Pizza.findById(id);
-    res.render('pizzaAdmin', {
+    let result = await Commande.findById(id);
+    res.render('commande', {
         showForm: true,
-        inputDisabled: "readonly",
+        nameId: 'name=_id',
+        actionForm: '/admin/commande/update',
+        livreurList: livreurList,
+        clientList: clientList,
+        pizzaList: pizzaList,
         item: result
     });
 })
 
-app.post('/admin/pizza/create', async (req, res) => {
-    let result = await Pizza.create(req.body);
-    result = await Pizza.find({});
-    let length = result.length;
-    res.render('pizzaAdmin', {
+
+//fetch onchange of client
+app.get('/admin/commande/adresseList', async (req, res) => {
+    const url = req.url;
+    const requestUrl = new URL(url, backEndUrl);
+    const id = requestUrl.searchParams.get('_id');
+    let result = await Client.findById(id);
+    let adressList = result.adresses;
+    res.send(adressList);
+})
+//fetch pizzaList
+app.get('/admin/commande/pizzaList', async (req, res) => {
+    let result = await Pizza.find({});
+    res.send(result);
+})
+
+
+
+app.post('/admin/commande/create', async (req, res) => {
+
+    let newCommande = {
+        livreur: req.body.livreur,
+        client: { nom: "", prenom: "", _id: "" },
+        pizzas: [],
+        statut: req.body.statut,
+        adresse: req.body.adresse,
+        total: 0
+    };
+
+    const client = await Client.findById(req.body.client);
+    newCommande.client.nom = client.nom;
+    newCommande.client.prenom = client.prenom;
+    newCommande.client._id = client._id;
+    let result = '';
+    let obj = {};
+    for (let index = 0; index < req.body.IdsPizza.length; index++) {
+        result = await Pizza.findById(req.body.IdsPizza[index]);
+        obj = { libelle: result.libelle, quantites: req.body.QPizza[index], version: result.version, _id: result._id };
+
+        newCommande.pizzas.push(obj);
+        newCommande.total += ((+newCommande.pizzas[index].quantites) * result.prix);
+    }
+    result = await Commande.create(req.body._id, newCommande);
+    result = await Commande.find({});
+    length = result.length;
+    res.render('commande', {
         showForm: false,
         length: length,
-        arrayPizza: result
+        arrayCommande: result
+    });
+
+})
+
+
+app.post('/admin/commande/delete', async (req, res) => {
+    const url = req.url;
+    const requestUrl = new URL(url, backEndUrl);
+    const id = requestUrl.searchParams.get('_id');
+
+    let result = await Commande.deleteOne({ _id: id });
+    result = await Commande.find({});
+    let length = result.length;
+    res.render('commande', {
+        showForm: false,
+        length: length,
+        arrayCommande: result
     });
 })
 
-app.post('/admin/pizza/delete', async (req, res) => {
+app.post('/admin/commande/update', async (req, res) => {
+
+    let newCommande = {
+        livreur: req.body.livreur,
+        client: { nom: "", prenom: "", _id: "" },
+        pizzas: [],
+        statut: req.body.statut,
+        adresse: req.body.adresse,
+        total: 0
+    };
+
+    const client = await Client.findById(req.body.client);
+    newCommande.client.nom = client.nom;
+    newCommande.client.prenom = client.prenom;
+    newCommande.client._id = client._id;
+    for (let index = 0; index < req.body.IdsPizza.length; index++) {
+        let result = await Pizza.findById(req.body.IdsPizza[index]);
+        let obj = { libelle: result.libelle, quantites: req.body.QPizza[index], version: result.version, _id: result._id };
+
+        newCommande.pizzas.push(obj);
+        newCommande.total += ((+newCommande.pizzas[index].quantites) * result.prix);
+    }
+    let result = await Commande.findByIdAndUpdate(req.body._id, newCommande);
+    result = await Commande.find({});
+    let length = result.length;
+    res.render('commande', {
+        showForm: false,
+        length: length,
+        arrayCommande: result
+    });
+
+})
+
+
+app.post('/admin/commande/delete', async (req, res) => {
     const url = req.url;
     const requestUrl = new URL(url, backEndUrl);
     const id = requestUrl.searchParams.get('_id');
     console.log(id);
-    let result = await Pizza.deleteOne({ _id: id });
-    result = await Pizza.find({});
+    let result = await Commande.deleteOne({ _id: id });
+    result = await Commande.find({});
     let length = result.length;
-    res.render('pizzaAdmin', {
+    res.render('commande', {
         showForm: false,
         length: length,
-        arrayPizza: result
+        arrayCommande: result
     });
 })
 
