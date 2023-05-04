@@ -122,9 +122,9 @@
                                 </div>
                                 <div class="input-group mb-3">
                                     <span class="col-2 input-group-text">Statut :</span>
-                                    <select name="statut" class="form-select form-select-sm"
+                                    <select id="statut" name="statut" class="form-select form-select-sm"
                                         aria-label=".form-select-sm example">
-                                        <option value="<%=item.statut%>" selected>
+                                        <option id="state" value="<%=item.statut%>" selected>
                                             Original state : <%=item.statut%>
                                         </option>
                                         <option value="ENREGISTRE">ENREGISTRE</option>
@@ -163,7 +163,7 @@
 
                                 <div class="d-flex justify-content-between">
                                     <a href="/admin/commande" class="btn btn-primary ">Annuler</a>
-                                    <button type="submit" class="btn btn-primary ">Soumettre</button>
+                                    <button id="submit" type="submit" class="btn btn-primary ">Soumettre</button>
                                 </div>
                             </form>
                             <%}else{%>
@@ -244,9 +244,12 @@
                                 <%}%>
                     </div>
                 </div>
-                <div class="border border-dark border-3 col-3 h-100  bg-light">
+                <div id="zoneActiv"
+                    class="border border-dark border-3 col-3 h-100  bg-light d-flex flex-column align-items-center">
+                    <div class="mb-3">
+                        Activités
+                    </div>
 
-                    Zone A
                 </div>
             </div>
 
@@ -261,15 +264,62 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
             crossorigin="anonymous"></script>
+        <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
         <script>
             window.onload = function () {
+                var change = false;
+                var socket = io.connect('http://127.0.0.1:5000');
                 const client = document.getElementById('client');
                 const adresseSelect = document.getElementById('adresse');
                 const add = document.getElementById('add');
                 const pizzaListDiv = document.getElementById('pizzaListDiv');
                 const number = document.getElementById('number');
+                const statut = document.getElementById('statut');
+                if (statut) {
+                    const state = document.getElementById('state');
+
+                    statut.onchange = (e) => {
+                        if (state.value === e.target.value) {
+                            change = false;
+                        } else {
+                            change = true;
+                        }
+
+                    };
+                }
+
+                socket.on('broadcast', activities => {
+                    const zoneActiv = document.getElementById('zoneActiv');
+                    for (let index = 0; index < activities.length; index++) {
+                        const div = document.createElement('div');
+                        div.className = 'col-10 border mb-2 rounded-3 border-success';
+                        div.innerHTML = activities[index];
+                        zoneActiv.appendChild(div);
+                    }
+                });
+
+                const submit = document.getElementById('submit');
+                if (submit) {
+                    submit.addEventListener('click', function () {
+                        const time = new Date();
+                        const formCommande = document.getElementById('formEditCommande');
+                        let activitie = time.getHours() + 'h' + time.getMinutes();
+                        if (formCommande.action === "http://127.0.0.1:5000/admin/commande/update") {
+                            if (change) {
+                                activitie += ` Statut d'une commande a été modifiée`;
+                            } else {
+                                activitie += ' Une commande a été modifiée';
+                            }
+                        } else {
+                            activitie += ' Nouvelle commande créée';
+                        }
+                        socket.emit('event', activitie);
+
+                    });
+                }
+
                 if (number) {
-                    
+
                     let index = +number.value;
                     let element = '';
                     let reduceSpan = '';
@@ -281,12 +331,12 @@
                             const reduceDiv = document.getElementById(divId);
                             reduceDiv.innerHTML = "";
                             reduceDiv.classList = "";
-    
-    
+
+
                         };
                     }
-    
-    
+
+
                     index++;
                     add.onclick = function () {
                         let newPizzaDiv = document.createElement('div');
@@ -297,7 +347,7 @@
                             .then(res => {
                                 return res.json();
                             }).then(res => {
-    
+
                                 const pizzaSelect = document.createElement('select');
                                 pizzaSelect.name = 'IdsPizza';
                                 pizzaSelect.className = 'w-50 form-select form-select-sm';
@@ -313,7 +363,7 @@
                                 };
                                 newPizzaDiv.appendChild(pizzaSelect);
                                 const strong = document.createElement('strong');
-                                strong.className="align-self-center";
+                                strong.className = "align-self-center";
                                 strong.innerText = 'X';
                                 newPizzaDiv.appendChild(strong);
                                 const newInput = document.createElement('input');
@@ -336,11 +386,11 @@
                                 span.appendChild(reduce);
                                 newPizzaDiv.appendChild(span);
                                 pizzaListDiv.appendChild(newPizzaDiv);
-    
+
                                 index++;
                             });
-    
-    
+
+
                     };
                     client.onchange = (e) => {
                         if (e.target.value) {
@@ -361,7 +411,7 @@
                         } else adresseSelect.innerHTML = "";
                     }
                 }
-                }
+            }
         </script>
 </body>
 

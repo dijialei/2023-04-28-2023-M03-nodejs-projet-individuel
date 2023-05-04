@@ -5,7 +5,8 @@ import Livreur from '../models/livreur.js';
 import Client from '../models/client.js';
 import brcyptjs from 'bcryptjs';
 import Commande from '../models/commande.js';
-
+import { createServer } from 'http';
+import { Server } from "socket.io";
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/restaurant-pizza';
 mongoose.set('strictQuery', false);
@@ -22,6 +23,10 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+
+const server = createServer(app);
+// initialisation Socket.IO à partir d'un serveur géré par Express
+const io = new Server(server);
 
 //admin Menu
 
@@ -84,7 +89,7 @@ app.post('/admin/pizza/delete', async (req, res) => {
     const url = req.url;
     const requestUrl = new URL(url, backEndUrl);
     const id = requestUrl.searchParams.get('_id');
-    console.log(id);
+
     let result = await Pizza.deleteOne({ _id: id });
     result = await Pizza.find({});
     let length = result.length;
@@ -348,27 +353,43 @@ app.post('/admin/commande/create', async (req, res) => {
         total: 0
     };
 
-    const client = await Client.findById(req.body.client);
-    newCommande.client.nom = client.nom;
-    newCommande.client.prenom = client.prenom;
-    newCommande.client._id = client._id;
-    let result = '';
-    let obj = {};
-    for (let index = 0; index < req.body.IdsPizza.length; index++) {
-        result = await Pizza.findById(req.body.IdsPizza[index]);
-        obj = { libelle: result.libelle, quantites: req.body.QPizza[index], version: result.version, _id: result._id };
+    try {
+        const client = await Client.findById(req.body.client);
+        newCommande.client.nom = client.nom;
+        newCommande.client.prenom = client.prenom;
+        newCommande.client._id = client._id;
+        let result = '';
+        let obj = {};
 
-        newCommande.pizzas.push(obj);
-        newCommande.total += ((+newCommande.pizzas[index].quantites) * result.prix);
+        if (typeof (req.body.IdsPizza) === "string") {
+            result = await Pizza.findById(req.body.IdsPizza);
+            obj = { libelle: result.libelle, quantites: req.body.QPizza, version: result.version, _id: result._id };
+
+            newCommande.pizzas.push(obj);
+            newCommande.total += ((+req.body.QPizza) * result.prix);
+        } else {
+
+            for (let index = 0; index < req.body.IdsPizza.length; index++) {
+                result = await Pizza.findById(req.body.IdsPizza[index]);
+                obj = { libelle: result.libelle, quantites: req.body.QPizza[index], version: result.version, _id: result._id };
+
+                newCommande.pizzas.push(obj);
+                newCommande.total += ((+newCommande.pizzas[index].quantites) * result.prix);
+            }
+        }
+
+
+        result = await Commande.create(newCommande);
+        result = await Commande.find({});
+        let length = result.length;
+        res.render('commande', {
+            showForm: false,
+            length: length,
+            arrayCommande: result
+        });
+    } catch (error) {
+        console.log(error);
     }
-    result = await Commande.create(req.body._id, newCommande);
-    result = await Commande.find({});
-    length = result.length;
-    res.render('commande', {
-        showForm: false,
-        length: length,
-        arrayCommande: result
-    });
 
 })
 
@@ -399,47 +420,64 @@ app.post('/admin/commande/update', async (req, res) => {
         total: 0
     };
 
-    const client = await Client.findById(req.body.client);
-    newCommande.client.nom = client.nom;
-    newCommande.client.prenom = client.prenom;
-    newCommande.client._id = client._id;
-    for (let index = 0; index < req.body.IdsPizza.length; index++) {
-        let result = await Pizza.findById(req.body.IdsPizza[index]);
-        let obj = { libelle: result.libelle, quantites: req.body.QPizza[index], version: result.version, _id: result._id };
+    try {
+        const client = await Client.findById(req.body.client);
+        newCommande.client.nom = client.nom;
+        newCommande.client.prenom = client.prenom;
+        newCommande.client._id = client._id;
+        let result = '';
+        let obj = {};
 
-        newCommande.pizzas.push(obj);
-        newCommande.total += ((+newCommande.pizzas[index].quantites) * result.prix);
+        if (typeof (req.body.IdsPizza) === "string") {
+            result = await Pizza.findById(req.body.IdsPizza);
+            obj = { libelle: result.libelle, quantites: req.body.QPizza, version: result.version, _id: result._id };
+
+            newCommande.pizzas.push(obj);
+            newCommande.total += ((+req.body.QPizza) * result.prix);
+        } else {
+
+            for (let index = 0; index < req.body.IdsPizza.length; index++) {
+                result = await Pizza.findById(req.body.IdsPizza[index]);
+                obj = { libelle: result.libelle, quantites: req.body.QPizza[index], version: result.version, _id: result._id };
+
+                newCommande.pizzas.push(obj);
+                newCommande.total += ((+newCommande.pizzas[index].quantites) * result.prix);
+            }
+        }
+
+
+        result = await Commande.findByIdAndUpdate(req.body._id,newCommande);
+        result = await Commande.find({});
+        let length = result.length;
+        res.render('commande', {
+            showForm: false,
+            length: length,
+            arrayCommande: result
+        });
+    } catch (error) {
+        console.log(error);
     }
-    let result = await Commande.findByIdAndUpdate(req.body._id, newCommande);
-    result = await Commande.find({});
-    let length = result.length;
-    res.render('commande', {
-        showForm: false,
-        length: length,
-        arrayCommande: result
-    });
 
 })
 
+let activities = [];
 
-app.post('/admin/commande/delete', async (req, res) => {
-    const url = req.url;
-    const requestUrl = new URL(url, backEndUrl);
-    const id = requestUrl.searchParams.get('_id');
-    console.log(id);
-    let result = await Commande.deleteOne({ _id: id });
-    result = await Commande.find({});
-    let length = result.length;
-    res.render('commande', {
-        showForm: false,
-        length: length,
-        arrayCommande: result
+io.on('connection', function (socket) {
+
+    io.emit('broadcast', activities);
+    socket.on('event',data=>{
+        
+        activities.push(data);
     });
+    socket.on('disconnect', function () {
+
+    })
 })
 
 
 
 
-app.listen(port, ip, () => {
+
+server.listen(port, ip, () => {
     console.log(`Server is listenning at ${backEndUrl}`);
 });
