@@ -27,7 +27,7 @@ Les écrans ne sont pas contractuelles, n'hésitez pas à être force de proposi
 - [ ] [USA009 - Promotions - CRUD](issues/admin/usa009.md)
 - [ ] [USA010 - Historique des emails envoyés](issues/admin/usa010.md)
 - [ ] [USA011 - Ingrédients - CRUD](issues/admin/usa011.md)
-- [ ] :dart: [USA012 - Visualiser activités (temps réel)](issues/admin/usa012.md)
+- [x] :dart: [USA012 - Visualiser activités (temps réel)](issues/admin/usa012.md)
 - [ ] [USA013 - Boissons - CRUD](issues/admin/usa013.md)
 - [ ] [USA014 - Desserts - CRUD](issues/admin/usa014.md)
 - [ ] [USA015 - Menu - CRUD](issues/admin/usa015.md)
